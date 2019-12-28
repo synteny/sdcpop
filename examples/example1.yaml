@@ -1,0 +1,49 @@
+description: Example Questionnaire for SDCPOP
+title: Example Questionnaire
+items:
+  - text: Пол
+    type: choice
+    required: false
+    answers:
+      - code: Male
+        display: Мужской
+      - code: Female
+        display: Женский
+  - text: Индекс массы тела
+    type: group
+    required: true
+    # repeats: false -- default value
+    items:
+      - text: Рост
+        type: decimal
+        linkId: height
+        itemControl: textbox
+        code:
+          system: http://loinc.org
+          code: 8302-2
+        definition: Observation
+      - text: Вес
+        type: decimal
+        linkId: weight
+        itemControl: textbox
+        code:
+          system: http://loinc.org
+          code: 29463-7
+        definition: Observation
+      - text: ИМТ
+        type: decimal
+		readOnly: true
+  		enableWhen: ['weight exists', 'height exists']
+		enableBehavior: and
+		calculatedExpression: '%weight / %height / %height'
+		code:
+			system: http://loinc.org
+			code: 39156-5
+		definition: Observation
+
+
+
+
+
+
+
