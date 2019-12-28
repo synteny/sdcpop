@@ -1,0 +1,21 @@
+{:paths ["src" "resources"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.1"}}
+ :aliases
+ {:nrepl      {:extra-paths ["dev" "test"]
+               :extra-deps  {org.clojure/tools.nrepl       {:mvn/version "0.2.13"}
+                             cider/cider-nrepl             {:mvn/version "0.20.0"}
+                             refactor-nrepl/refactor-nrepl {:mvn/version "2.4.0"}}
+               :jvm-opts    ^:replace ["-XX:-OmitStackTraceInFastThrow"]}
+
+  :test         {:extra-paths ["test"]}
+
+  :runner       {:extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner"
+                                                         :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
+                 :jvm-opts   ^:replace ["-XX:-OmitStackTraceInFastThrow"]
+                 :main-opts ["-m" "cognitect.test-runner"]}
+
+  :build {:extra-paths ["build"]
+          :jvm-opts    ^:replace ["-XX:-OmitStackTraceInFastThrow"]
+          :extra-deps  {cambada {:git/url "https://github.com/HealthSamurai/cambada"
+                                 :sha     "e44a0bebd039285f3e10f15f5703d6eaf92672c7"}}
+          :main-opts   ["-m" "build"]}}}
