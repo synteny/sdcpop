@@ -1,0 +1,5 @@
+code:
+  constant:
+    coding:
+      system: http://loinc.org
+      code: 31165-5

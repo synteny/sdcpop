@@ -9,6 +9,7 @@ items:
         display: Мужской
       - code: Female
         display: Женский
+    definition: Observation
   - text: Индекс массы тела
     type: group
     required: true
@@ -17,13 +18,7 @@ items:
         type: decimal
         linkId: height
         itemControl: textbox
-        definition:
-          Observation:
-            code:
-              constant:
-                coding:
-                  system: http://loinc.org
-                  code: 8302-2
+        definition: Observation/example-questionnaire-height.yaml
         path: 'value'
       - text: Вес
         type: decimal
@@ -32,13 +27,7 @@ items:
         code:
           system: http://loinc.org
           code: 29463-7
-        definition:
-          Observation:
-            code:
-              constant:
-                coding:
-                  system: http://loinc.org
-                  code: 29463-7
+        definition: Observation/example-questionnaire-weight.yaml
         path: 'value'
       - text: ИМТ
         type: decimal
@@ -46,13 +35,7 @@ items:
         enableWhen: ['weight exists', 'height exists']
         enableBehavior: and
         calculatedExpression: '%weight / %height / %height'
-        definition:
-          Observation:
-            code:
-              constant:
-                coding:
-                  system: http://loinc.org
-                  code: 31165-5
+        definition: Observation/example-questionnaire-bmi.yaml
         path: 'value'
   - text: Диагноз
     type: group

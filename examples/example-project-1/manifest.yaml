@@ -1,0 +1,5 @@
+id: example-project-1
+title: SDCPOP Example 1
+url: http://example.org/fhir
+description: Sample project for SDCPOP
+fhir: 4.0.0
