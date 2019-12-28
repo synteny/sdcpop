@@ -12,16 +12,19 @@ items:
   - text: Индекс массы тела
     type: group
     required: true
-    # repeats: false -- default value
     items:
       - text: Рост
         type: decimal
         linkId: height
         itemControl: textbox
-        code:
-          system: http://loinc.org
-          code: 8302-2
-        definition: Observation
+        definition:
+          Observation:
+            code:
+              constant:
+                coding:
+                  system: http://loinc.org
+                  code: 8302-2
+        path: 'value'
       - text: Вес
         type: decimal
         linkId: weight
@@ -29,17 +32,40 @@ items:
         code:
           system: http://loinc.org
           code: 29463-7
-        definition: Observation
+        definition:
+          Observation:
+            code:
+              constant:
+                coding:
+                  system: http://loinc.org
+                  code: 29463-7
+        path: 'value'
       - text: ИМТ
         type: decimal
-		readOnly: true
-  		enableWhen: ['weight exists', 'height exists']
-		enableBehavior: and
-		calculatedExpression: '%weight / %height / %height'
-		code:
-			system: http://loinc.org
-			code: 39156-5
-		definition: Observation
+        readOnly: true
+        enableWhen: ['weight exists', 'height exists']
+        enableBehavior: and
+        calculatedExpression: '%weight / %height / %height'
+        definition:
+          Observation:
+            code:
+              constant:
+                coding:
+                  system: http://loinc.org
+                  code: 31165-5
+        path: 'value'
+  - text: Диагноз
+    type: group
+    repeats: true
+    definition: Condition
+    items:
+      - text: Заболевание
+        type: choice
+        answers: http://hl7.org/fhir/ValueSet/icd-10
+        path: 'Condition.code'
+      - text: Дата наступления
+        type: date
+        path: 'Condition.onset'
 
 
 
