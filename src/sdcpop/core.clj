@@ -37,23 +37,23 @@
         path (if (str/ends-with? d ".yaml") res-type d)]
     (str "http://hl7.org/fhir/StructureDefinition/" path)))
 
-(def item
+(defn item
   "Takes an item as an input and returns an item map where some keys are preprocessed."
   [itm]
-  (reduce-kv
-   (fn [m k v]
-     (case k
-       ;; some keys are just copied over
-       (:text :type :required :repeats) (assoc m k v)
-       ;; other keys need a special treatment
-       :linkId (assoc m k (get itm :linkId (str (java.util.UUID/randomUUID))))
-       :extension (assoc m k (mapv extension (select-keys itm (keys known-extensions))))
-       :items (assoc m :item (mapv item v))
-       :definition (assoc m k (structure-definition-url v))
-       ;; all other keys just ignored
-       m))
-   {}
-   itm))
+  (-> (reduce-kv
+       (fn [m k v]
+         (case k
+           ;; some keys are just copied over
+           (:text :type :required :repeats) (assoc m k v)
+           ;; other keys need a special treatment
+           :extension (assoc m k (mapv extension (select-keys itm (keys known-extensions))))
+           :items (assoc m :item (mapv item v))
+           :definition (assoc m k (structure-definition-url v))
+           ;; all other keys just ignored
+           m))
+       {}
+       itm)
+      (update :linkId #(or % (java.util.UUID/randomUUID)))))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
