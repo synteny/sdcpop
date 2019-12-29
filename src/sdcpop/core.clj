@@ -32,8 +32,10 @@
                       v)})))
 
 (defn structure-definition-url
-  [path]
-  (str "http://hl7.org/fhir/StructureDefinition/" path))
+  [d]
+  (let [res-type (second (re-find #"(^[^/]+)/" d))
+        path (if (str/ends-with? d ".yaml") res-type d)]
+    (str "http://hl7.org/fhir/StructureDefinition/" path)))
 
 (defn item
   [itm]
