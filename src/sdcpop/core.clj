@@ -53,7 +53,7 @@
            m))
        {}
        itm)
-      (update :linkId #(or % (java.util.UUID/randomUUID)))))
+      (assoc :linkId (get itm :linkId (java.util.UUID/randomUUID)))))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
