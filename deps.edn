@@ -1,6 +1,7 @@
-{:paths ["src" "resources"]
+{:paths ["src" "resources" "examples"]
  :deps {org.clojure/clojure  {:mvn/version "1.10.1"}
-        clj-commons/clj-yaml {:mvn/version "0.7.0"}}
+        clj-commons/clj-yaml {:mvn/version "0.7.0"}
+        cheshire {:mvn/version "5.9.0"}}
  :aliases
  {:nrepl      {:extra-paths ["dev" "test"]
                :extra-deps  {org.clojure/tools.nrepl       {:mvn/version "0.2.13"}
