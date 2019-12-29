@@ -64,7 +64,7 @@
          (file-seq)
          (remove #(.isDirectory %))
          (remove #(= manifest-name (.getName %)))
-         (filter #(= (.getPAth dir) (.. % getAbsoluteFile getParent)))
+         (filter #(= (.getPath dir) (.. % getAbsoluteFile getParent)))
          (map (fn [f] [(str/replace (.getName f) #"\.yaml$" "")
                        (-> (.getAbsolutePath f)
                            (slurp)
