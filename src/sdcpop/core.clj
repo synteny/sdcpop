@@ -75,7 +75,7 @@
               (:path :calculatedExpression :itemControl) m
               ;; some keys need a special treatment
               :answers (assoc m :answerOption (if (coll? v)
-                                                (mapv #(hash-map :valueCoding (get % :code)) v)
+                                                (mapv #(hash-map :valueCoding %) v)
                                                 v))
               :enableWhen (assoc m k (enable-when v meta'))
               :items (assoc m
