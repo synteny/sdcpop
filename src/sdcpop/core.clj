@@ -8,7 +8,7 @@
 
 (def manifest-name "manifest.yaml")
 
-(def (known-extensions)
+(def known-extensions
   {:itemControl {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
                  :type "CodeableConcept"}
    :path {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression"
