@@ -65,34 +65,35 @@
   [meta itm]
   (let [linkId (get itm :linkId (str (java.util.UUID/randomUUID)))
         meta' (assoc meta linkId (get itm :type))]
-    (-> (reduce-kv
-         (fn [m k v]
-           (case k
-             ;; ignore extension keys
-             (:path :calculatedExpression :itemControl) m
-             ;; some keys need a special treatment
-             :enableWhen (assoc m k (enable-when v meta'))
-             :items (assoc m
-                           :item
-                           (loop [meta' meta'
-                                  items v
-                                  res []]
-                             (if (seq items)
-                               (let [it (first items)
-                                     linkId (get it :linkId (str (java.util.UUID/randomUUID)))
-                                     meta' (assoc meta' linkId (get it :type))]
-                                 (recur
-                                  meta'
-                                  (rest items)
-                                  (conj res (item meta' it))))
-                               res)))
-             :definition (assoc m k (structure-definition-url v))
-             ;; all other keys just copied over
-             (assoc m k v)))
-         {}
-         itm)
-        (assoc :linkId linkId
-               :extension (mapv extension (select-keys itm (keys known-extensions)))))))
+    (->> (assoc itm
+                :linkId linkId
+                :extension (mapv extension (select-keys itm (keys known-extensions))))
+         (reduce-kv
+           (fn [m k v]
+             (case k
+               ;; ignore extension keys
+               (:path :calculatedExpression :itemControl) m
+               ;; some keys need a special treatment
+               :answers (assoc m :answerOption (mapv #(hash-map :valueCoding (get % :code)) v))
+               :enableWhen (assoc m k (enable-when v meta'))
+               :items (assoc m
+                             :item
+                             (loop [meta' meta'
+                                    items v
+                                    res []]
+                               (if (seq items)
+                                 (let [it (first items)
+                                       linkId (get it :linkId (str (java.util.UUID/randomUUID)))
+                                       meta' (assoc meta' linkId (get it :type))]
+                                   (recur
+                                     meta'
+                                     (rest items)
+                                     (conj res (item meta' it))))
+                                 res)))
+               :definition (assoc m k (structure-definition-url v))
+               ;; all other keys just copied over
+               (assoc m k v)))
+           {}))))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
