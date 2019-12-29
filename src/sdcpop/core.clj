@@ -55,12 +55,11 @@
   (map
    (fn rule [r]
      (let [parts (str/split r #"\s+")]
-      ;  (prn :wtf (first parts) meta)
        (if (= 3 (count parts))
-         {:linkId (first parts)
+         {:question (first parts)
           :operator (second parts)
           (keyword (str "answer" (str/capitalize (fhir-type (get meta (first parts)))))) (last parts)}
-         {:linkId (first parts)
+         {:question (first parts)
           :operator (second parts)})))
    conditions))
 
