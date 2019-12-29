@@ -59,12 +59,12 @@
 (defn read-definitions
   "Reads dir path to a map of file-name => parsed yaml"
   [dir]
-  (let [dir (io/file dir)]
+  (let [dir (.getAbsoluteFile (io/file dir))]
     (->> dir
          (file-seq)
          (remove #(.isDirectory %))
          (remove #(= manifest-name (.getName %)))
-         (filter #(= (.getPath dir) (.getParent %)))
+         (filter #(= (.getPAth dir) (.. % getAbsoluteFile getParent)))
          (map (fn [f] [(str/replace (.getName f) #"\.yaml$" "")
                        (-> (.getAbsolutePath f)
                            (slurp)
