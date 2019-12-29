@@ -8,6 +8,11 @@
 
 (def manifest-name "manifest.yaml")
 
+(def type-map {"choice" "CodeableConcept"
+               "open-choice" "CodeableConcept"
+               "text" "string"
+               "url" "string"})
+
 (def known-extensions
   {:itemControl {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
                  :type "CodeableConcept"
@@ -37,23 +42,55 @@
         path (if (str/ends-with? d ".yaml") res-type d)]
     (str "http://hl7.org/fhir/StructureDefinition/" path)))
 
+(defn fhir-type
+  [t]
+  (get type-map t t))
+
+(defn enable-when
+  [conditions meta]
+  (map
+   (fn rule [r]
+     (let [parts (str/split r #"\s+")]
+      ;  (prn :wtf (first parts) meta)
+       (if (= 3 (count parts))
+         {:linkId (first parts)
+          :operator (second parts)
+          (keyword (str "answer" (str/capitalize (fhir-type (get meta (first parts)))))) (last parts)}
+         {:linkId (first parts)
+          :operator (second parts)})))
+   conditions))
+
 (defn item
   "Takes an item as an input and returns an item map where some keys are preprocessed."
-  [itm]
-  (-> (reduce-kv
-       (fn [m k v]
-         (case k
-           ;; some keys are just copied over
-           (:text :type :required :repeats) (assoc m k v)
-           ;; other keys need a special treatment
-           :extension (assoc m k (mapv extension (select-keys itm (keys known-extensions))))
-           :items (assoc m :item (mapv item v))
-           :definition (assoc m k (structure-definition-url v))
-           ;; all other keys just ignored
-           m))
-       {}
-       itm)
-      (assoc :linkId (get itm :linkId (java.util.UUID/randomUUID)))))
+  [meta itm]
+  (let [linkId (get itm :linkId (str (java.util.UUID/randomUUID)))
+        meta' (assoc meta linkId (get itm :type))]
+    (-> (reduce-kv
+         (fn [m k v]
+           (case k
+             ;; other keys need a special treatment
+             :enableWhen (assoc m k (enable-when v meta'))
+             :extension (assoc m k (mapv extension (select-keys itm (keys known-extensions))))
+             :items (assoc m
+                           :item
+                           (loop [meta' meta'
+                                  items v
+                                  res []]
+                             (if (seq items)
+                               (let [it (first items)
+                                     linkId (get it :linkId (str (java.util.UUID/randomUUID)))
+                                     meta' (assoc meta' linkId (get it :type))]
+                                 (recur
+                                  meta'
+                                  (rest items)
+                                  (conj res (item meta' it))))
+                               res)))
+             :definition (assoc m k (structure-definition-url v))
+             ;; all other keys just copied over
+             (assoc m k v)))
+         {}
+         itm)
+        (assoc :linkId linkId))))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
@@ -63,8 +100,8 @@
    :version (:version manifest)
    :title (:title definition)
    :status "active"
-   :item (map item
-              (get definition :items))})
+   :item (mapv (partial item {})
+               (get definition :items))})
 
 (defn read-manifest
   "Parse manifest file"
@@ -74,7 +111,7 @@
        (clj-yaml.core/parse-string)))
 
 (defn read-definitions
-  "Reads dir path to a map of file-name => parsed yaml"
+  "Reads dir path to a map of file-name => JSON"
   [dir]
   (let [dir (.getAbsoluteFile (io/file dir))]
     (->> dir
@@ -90,53 +127,25 @@
 
 (defn process-definitions
   "Generate Questionnaires for definitions"
-  [defs manifest]
+  [manifest defs]
   (->> defs
        (map (fn [[title definition]]
-              [title (json/generate-string
-                      (questionnaire title definition manifest))]))
+              [title (-> (questionnaire title definition manifest)
+                         (json/generate-string {:pretty true}))]))
        (into {})))
+
+(defn write-questionnaires
+  [dir qs]
+  (doseq [q qs]
+    (spit (.getAbsolutePath (io/file dir (str (first q) ".json")))
+          (second q))))
 
 (defn -main
   [& args]
-  (process-definitions (read-definitions (first args))
-                       (read-manifest (first args))))
+  (->> (read-definitions (first args))
+       (process-definitions (read-manifest (first args)))
+       (write-questionnaires (second args))))
 
 (comment
-  (str "aaa" ".xx")
-  (def manifest (read-manifest "./examples/example-project-1"))
-  (def title "xxx")
-  (json/generate-string {:foo "bar" :baz 5})
-  (-main "./examples/example-project-1")
-  (get {} :key :xxx)
-  (java.util.UUID/randomUUID)
-
-  (clojure.pprint/pprint (read-definitions "./examples/example-project-1"))
-  (->> (get-in (read-definitions "./examples/example-project-1")
-               ["example-questionnaire" :items])
-       (map item)
-       (clojure.pprint/pprint))
-
-  ;; https://clojuredocs.org/clojure.string/split
-  (map (fn rule [r]
-         (let [parts (str/split r #"\s+")]
-           (if (= 3 (count parts))
-             {:linkId (first parts)
-              :operator (second parts)
-              :third (last parts)}
-             parts)))
-       ["weight exists" "height = 185"])
-
-
-  (def home (io/file "./examples/example-project-1"))
-  (def files (file-seq home))
-
-  (def definitions (->> files
-                        (remove #(.isDirectory %))
-                        (remove #(= manifest-name (.getName %)))
-                        (filter #(= (.getPath home) (.getParent %)))
-                        (map (fn [f] [(.getName f)
-                                      (-> (.getAbsolutePath f)
-                                          (slurp)
-                                          (clj-yaml.core/parse-string))]))
-                        (into {}))))
+  (-main "./examples/example-project-1" "./output")
+)

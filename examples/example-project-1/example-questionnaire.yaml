@@ -15,7 +15,7 @@ items:
     required: true
     items:
       - text: Рост
-        type: decimal
+        type: text
         linkId: height
         itemControl: textbox
         definition: Observation/example-questionnaire-height.yaml
@@ -32,7 +32,7 @@ items:
       - text: ИМТ
         type: decimal
         readOnly: true
-        enableWhen: ['weight exists', 'height exists']
+        enableWhen: ['weight exists', 'height > 0']
         enableBehavior: and
         calculatedExpression: '%weight / %height / %height'
         definition: Observation/example-questionnaire-bmi.yaml
