@@ -39,21 +39,21 @@
 
 (defn item
   [itm]
-  (merge
-   {:linkId (get itm :linkId (str (java.util.UUID/randomUUID)))
-    :text (get itm :text)
-    :type (get itm :type)
-    :repeats (get itm :repeats)
-    :required (get itm :required)
-    :item (map item (get itm :items))
-    :extension (mapv extension
-                     (select-keys itm [:itemControl
-                                     :path
-                                     :calculatedExpression]))}
-   (when-let [d (get itm :definition)]
-     (let [res-type (second (re-find #"(^[^/]+)/" d))
-           path (if (str/ends-with? d ".yaml") res-type d)]
-       {:definition (structure-definition-url path)}))))
+  (reduce-kv
+   (fn [m k v]
+     (case k
+       :linkId (assoc m k (get itm :linkId (str (java.util.UUID/randomUUID))))
+       (:text :type :required :repeats) (assoc m k v)
+       :extension (assoc m k (mapv extension
+                                   (select-keys itm [:itemControl
+                                                     :path
+                                                     :calculatedExpression])))
+       :items (assoc m k (mapv item (get itm :items)))
+       :definition (assoc m k (structure-definition-url (get itm :definition)))
+       ;; all other cases just ignored
+       m))
+   {}
+   itm))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
