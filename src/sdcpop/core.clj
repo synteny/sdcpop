@@ -99,7 +99,8 @@
 
 (defn -main
   [& args]
-  (process-definitions (read-definitions (first args)) (read-manifest (first args))))
+  (process-definitions (read-definitions (first args))
+                       (read-manifest (first args))))
 
 (comment
   (str "aaa" ".xx")
