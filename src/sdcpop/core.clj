@@ -14,18 +14,23 @@
                "url" "string"})
 
 (def known-extensions
-  {:itemControl {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
-                 :type "CodeableConcept"
-                 :template {:system "http://hl7.org/fhir/questionnaire-item-control"}
-                 :template-path [:code]}
-   :path {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression"
-          :type "Expression"
-          :template {:language "text/fhirpath"}
-          :template-path [:expression]}
-   :calculatedExpression {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression"
-                          :type "Expression"
-                          :template {:language "text/fhirpath"}
-                          :template-path [:expression]}})
+  {:itemControl
+   {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
+    :type "CodeableConcept"
+    :template {:system "http://hl7.org/fhir/questionnaire-item-control"}
+    :template-path [:code]}
+   
+   :path
+   {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression"
+    :type "Expression"
+    :template {:language "text/fhirpath"}
+    :template-path [:expression]}
+
+   :calculatedExpression
+   {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression"
+    :type "Expression"
+    :template {:language "text/fhirpath"}
+    :template-path [:expression]}})
 
 (defn extension
   [[k v]]
