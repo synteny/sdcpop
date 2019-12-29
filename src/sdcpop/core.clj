@@ -36,15 +36,14 @@
   (str "http://hl7.org/fhir/StructureDefinition/" path))
 
 (defn item
-  [manifest title itm]
+  [itm]
   (merge
    {:linkId (get itm :linkId (str (java.util.UUID/randomUUID)))
     :text (get itm :text)
     :type (get itm :type)
     :repeats (get itm :repeats)
     :required (get itm :required)
-    :item (map (partial item manifest title)
-               (get itm :items))
+    :item (map item (get itm :items))
     :extension (mapv extension
                      (select-keys itm [:itemControl
                                      :path
@@ -62,7 +61,7 @@
    :version (:version manifest)
    :title (:title definition)
    :status "active"
-   :item (map (partial item manifest title)
+   :item (map item
               (get definition :items))})
 
 (defn read-manifest
