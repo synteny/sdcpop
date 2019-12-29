@@ -9,12 +9,17 @@
 (def manifest-name "manifest.yaml")
 
 (def known-extensions
-  {:itemControl {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
-                 :type "CodeableConcept"}
-   :path {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression"
-          :type "Expression"}
-   :calculatedExpression {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression"
-                          :type "Expression"}})
+  {:itemControl
+   {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
+    :type "CodeableConcept"}
+   
+   :path
+   {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression"
+    :type "Expression"}
+
+   :calculatedExpression
+   {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression"
+    :type "Expression"}})
 
 (defn extension
   [[k v]]
