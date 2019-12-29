@@ -68,9 +68,10 @@
     (-> (reduce-kv
          (fn [m k v]
            (case k
-             ;; other keys need a special treatment
+             ;; ignore extension keys
+             (:path :calculatedExpression :itemControl) m
+             ;; some keys need a special treatment
              :enableWhen (assoc m k (enable-when v meta'))
-             :extension (assoc m k (mapv extension (select-keys itm (keys known-extensions))))
              :items (assoc m
                            :item
                            (loop [meta' meta'
@@ -90,7 +91,8 @@
              (assoc m k v)))
          {}
          itm)
-        (assoc :linkId linkId))))
+        (assoc :linkId linkId
+               :extension (mapv extension (select-keys itm (keys known-extensions)))))))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
