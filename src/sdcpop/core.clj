@@ -48,7 +48,7 @@
                                    (select-keys itm [:itemControl
                                                      :path
                                                      :calculatedExpression])))
-       :items (assoc m k (mapv item (get itm :items)))
+       :items (assoc m :item (mapv item (get itm :items)))
        :definition (assoc m k (structure-definition-url (get itm :definition)))
        ;; all other cases just ignored
        m))
