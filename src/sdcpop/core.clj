@@ -17,8 +17,8 @@
   {:itemControl
    {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
     :type "CodeableConcept"
-    :template {:system "http://hl7.org/fhir/questionnaire-item-control"}
-    :template-path [:code]}
+    :template {:coding {:system "http://hl7.org/fhir/questionnaire-item-control"}}
+    :template-path [:coding :code]}
    
    :path
    {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression"
@@ -32,20 +32,13 @@
     :template {:language "text/fhirpath"}
     :template-path [:expression]}})
 
-(defn extension-type
-  "Returns a extension type keyword."
-  [ext-data]
-  (keyword
-   (case (get ext-data :type)
-     "CodeableConcept" "coding"
-     (str "value" (get ext-data :type)))))
-
 (defn extension
   [[k v]]
   (let [ext-data (get known-extensions k)]
     (assoc (select-keys ext-data [:url])
-           (extension-type ext-data) (assoc-in (get ext-data :template)
-                                               (get ext-data :template-path) v))))
+           (keyword (str "value" (get ext-data :type)))
+           (assoc-in (get ext-data :template)
+                     (get ext-data :template-path) v))))
 
 (defn structure-definition-url
   [d]
