@@ -22,22 +22,25 @@
     (merge (dissoc ext-data :type)
            {(keyword (str "value" (:type ext-data))) v})))
 
-(defn item [i]
+(defn item
+  [manifest title itm]
+  (prn (:definition itm))
   (merge
-   {:linkId (get i :linkId (str (java.util.UUID/randomUUID)))
-    :text (get i :text)
-    :type (get i :type)
-    :repeats (get i :repeats)
-    :required (get i :required)
-    :item (map item (get i :items))
+   {:linkId (get itm :linkId (str (java.util.UUID/randomUUID)))
+    :text (get itm :text)
+    :type (get itm :type)
+    :repeats (get itm :repeats)
+    :required (get itm :required)
+    :item (map (partial item manifest title)
+               (get itm :items))
     :extension (mapv extension
-                     (select-keys i [:itemControl
+                     (select-keys itm [:itemControl
                                      :path
                                      :calculatedExpression]))}
-   (when (get i :definition)
-     {:definition (if (str/ends-with? (:definition i) ".yaml")
+   (when (get itm :definition)
+     {:definition (if (str/ends-with? (:definition itm) ".yaml")
                     (str (:url manifest) "/StructureDefinition/" (:id manifest) "-" title)
-                    (str "http://hl7.org/fhir/StructureDefinition/" (:definition i)))})))
+                    (str "http://hl7.org/fhir/StructureDefinition/" (:definition itm)))})))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
@@ -47,7 +50,8 @@
    :version (:version manifest)
    :title (:title definition)
    :status "active"
-   :item (map item (get definition :items))})
+   :item (map (partial item manifest title)
+              (get definition :items))})
 
 (defn read-manifest
   "Parse manifest file"
