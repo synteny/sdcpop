@@ -28,8 +28,8 @@
            {(keyword (str "value" (:type ext-data))) v})))
 
 (defn structure-definition-url
-  [manifest path]
-  (str (:url manifest) "/StructureDefinition/" path))
+  [path]
+  (str "http://hl7.org/fhir/StructureDefinition/" path))
 
 (defn item
   [manifest title itm]
@@ -48,7 +48,7 @@
    (when-let [d (get itm :definition)]
      (let [res-type (second (re-find #"(^[^/]+)/" d))
            path (if (str/ends-with? d ".yaml") res-type d)]
-       {:definition (structure-definition-url manifest path)}))))
+       {:definition (structure-definition-url path)}))))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
