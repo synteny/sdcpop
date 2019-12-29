@@ -22,6 +22,10 @@
     (merge (dissoc ext-data :type)
            {(keyword (str "value" (:type ext-data))) v})))
 
+(defn structure-definition-url
+  [manifest path]
+  (str (:url manifest) "/StructureDefinition/" path))
+
 (defn item
   [manifest title itm]
   (merge
@@ -36,10 +40,10 @@
                      (select-keys itm [:itemControl
                                      :path
                                      :calculatedExpression]))}
-   (when (get itm :definition)
-     {:definition (if (str/ends-with? (:definition itm) ".yaml")
-                    (str (:url manifest) "/StructureDefinition/" (:id manifest) "-" title)
-                    (str "http://hl7.org/fhir/StructureDefinition/" (:definition itm)))})))
+   (when-let [d (get itm :definition)]
+     (let [res-type (second (re-find #"(^[^/]+)/" d))
+           path (if (str/ends-with? d ".yaml") res-type d)]
+       {:definition (structure-definition-url manifest path)}))))
 
 (defn questionnaire
   "Builds questionnaire from parsed yaml"
