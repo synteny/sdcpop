@@ -16,17 +16,17 @@ items:
     required: true
     items:
       - text: Рост
-        type: text
+        type: decimal
         linkId: height
         itemControl: textbox
         definition: Observation/example-questionnaire-height.yaml
-        path: 'value as string'
+        path: '(value as Quantity).value as decimal'
       - text: Вес
         type: decimal
         linkId: weight
         itemControl: textbox
         definition: Observation/example-questionnaire-weight.yaml
-        path: 'value as string'
+        path: '(value as Quantity).value as decimal'
       - text: ИМТ
         type: decimal
         readOnly: true
@@ -34,7 +34,7 @@ items:
         enableBehavior: all
         calculatedExpression: '%weight / %height / %height'
         definition: Observation/example-questionnaire-bmi.yaml
-        path: 'value as string'
+        path: '(value as Quantity).value as decimal'
   - text: Диагноз
     type: group
     repeats: true

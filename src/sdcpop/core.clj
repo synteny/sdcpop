@@ -50,15 +50,35 @@
   [t]
   (get type-map t t))
 
+(defn parse-number
+  [s]
+  (let [n (read-string s)]
+    (if (number? n) n nil)))
+
+(defn parse-boolean
+  [s]
+  (let [n (read-string s)]
+    (if (boolean? n) n nil)))
+
+(defn typecast-literal
+  [type s]
+  (case type
+    "decimal" (parse-number s)
+    "integer" (parse-number s)
+    "unsignedInt" (parse-number s)
+    "positiveInt" (parse-number s)
+    "boolean" (parse-boolean s)))
+
 (defn enable-when
   [conditions meta]
   (map
    (fn rule [r]
      (let [parts (str/split r #"\s+")]
        (if (= 3 (count parts))
-         {:question (first parts)
-          :operator (second parts)
-          (keyword (str "answer" (str/capitalize (fhir-type (get meta (first parts)))))) (last parts)}
+         (let [type (fhir-type (get meta (first parts)))]
+           {:question (first parts)
+            :operator (second parts)
+            (keyword (str "answer" (str/capitalize type))) (typecast-literal type (last parts))})
          {:question (first parts)
           :operator (second parts)})))
    conditions))
@@ -77,9 +97,9 @@
               ;; ignore extension keys
               (:path :calculatedExpression :itemControl) m
               ;; some keys need a special treatment
-              :answers (assoc m :answerOption (if (coll? v)
-                                                (mapv #(hash-map :valueCoding %) v)
-                                                v))
+              :answers (if (coll? v) 
+                         (assoc m :answerOption (mapv #(hash-map :valueCoding %) v))
+                         (assoc m :answerValueSet v))
               :enableWhen (assoc m k (enable-when v meta'))
               :items (assoc m
                             :item
