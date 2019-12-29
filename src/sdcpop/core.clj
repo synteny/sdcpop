@@ -63,10 +63,7 @@
 (defn typecast-literal
   [type s]
   (case type
-    "decimal" (parse-number s)
-    "integer" (parse-number s)
-    "unsignedInt" (parse-number s)
-    "positiveInt" (parse-number s)
+    ("decimal" "integer" "unsignedInt" "positiveInt") (parse-number s)
     "boolean" (parse-boolean s)))
 
 (defn enable-when
