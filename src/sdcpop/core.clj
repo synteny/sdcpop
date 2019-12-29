@@ -42,8 +42,10 @@
   (reduce-kv
    (fn [m k v]
      (case k
-       :linkId (assoc m k (get itm :linkId (str (java.util.UUID/randomUUID))))
+       ;; some keys are just copied over
        (:text :type :required :repeats) (assoc m k v)
+       ;; other keys need a special treatment
+       :linkId (assoc m k (get itm :linkId (str (java.util.UUID/randomUUID))))
        :extension (assoc m k (mapv extension
                                    (select-keys itm [:itemControl
                                                      :path
