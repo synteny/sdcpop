@@ -16,7 +16,6 @@ jar:
 	clojure -A:build
 
 build:	jar
-	cp target/sdcpop-0.0.1-standalone.jar npm/sdcpop/bin/sdcpop.jar
 	cp target/sdcpop-0.0.1-standalone.jar target/sdcpop.jar
 
 test:
