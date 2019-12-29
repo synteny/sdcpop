@@ -24,7 +24,6 @@
 
 (defn item
   [manifest title itm]
-  (prn (:definition itm))
   (merge
    {:linkId (get itm :linkId (str (java.util.UUID/randomUUID)))
     :text (get itm :text)
