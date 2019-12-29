@@ -9,23 +9,27 @@
 (def manifest-name "manifest.yaml")
 
 (def known-extensions
-  {:itemControl
-   {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
-    :type "CodeableConcept"}
-   
-   :path
-   {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression"
-    :type "Expression"}
-
-   :calculatedExpression
-   {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression"
-    :type "Expression"}})
+  {:itemControl {:url "http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl"
+                 :type "CodeableConcept"
+                 :template {:system "http://hl7.org/fhir/questionnaire-item-control"}
+                 :template-path [:code]}
+   :path {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-initialExpression"
+          :type "Expression"
+          :template {:language "text/fhirpath"}
+          :template-path [:expression]}
+   :calculatedExpression {:url "http://hl7.org/fhir/uv/sdc/StructureDefinition/sdc-questionnaire-calculatedExpression"
+                          :type "Expression"
+                          :template {:language "text/fhirpath"}
+                          :template-path [:expression]}})
 
 (defn extension
   [[k v]]
   (let [ext-data (get known-extensions k)]
-    (merge (dissoc ext-data :type)
-           {(keyword (str "value" (:type ext-data))) v})))
+    (merge (dissoc ext-data :type :template :template-path)
+           {(keyword (str "value" (:type ext-data))) 
+            (assoc-in (get ext-data :template) 
+                      (get ext-data :template-path) 
+                      v)})))
 
 (defn structure-definition-url
   [path]
