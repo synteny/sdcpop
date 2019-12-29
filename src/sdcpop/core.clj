@@ -52,7 +52,7 @@
                                                      :calculatedExpression])))
        :items (assoc m :item (mapv item v))
        :definition (assoc m k (structure-definition-url v))
-       ;; all other cases just ignored
+       ;; all other keys just ignored
        m))
    {}
    itm))
