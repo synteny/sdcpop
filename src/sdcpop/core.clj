@@ -32,14 +32,20 @@
     :template {:language "text/fhirpath"}
     :template-path [:expression]}})
 
+(defn extension-type
+  "Returns a extension type keyword."
+  [ext-data]
+  (keyword
+   (case (get ext-data :type)
+     "CodeableConcept" "coding"
+     (str "value" (get ext-data :type)))))
+
 (defn extension
   [[k v]]
   (let [ext-data (get known-extensions k)]
-    (merge (dissoc ext-data :type :template :template-path)
-           {(keyword (str "value" (:type ext-data))) 
-            (assoc-in (get ext-data :template) 
-                      (get ext-data :template-path) 
-                      v)})))
+    (assoc (select-keys ext-data [:url])
+           (extension-type ext-data) (assoc-in (get ext-data :template)
+                                               (get ext-data :template-path) v))))
 
 (defn structure-definition-url
   [d]
