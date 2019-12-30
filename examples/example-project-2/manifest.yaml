@@ -1,0 +1,6 @@
+id: SDCPOP-examples
+title: Blood Pressure Questionnaire
+url: http://example.org/fhir
+version: 1.0.0
+description: Blood Pressure Example for SDCPOP
+fhir: 4.0.0

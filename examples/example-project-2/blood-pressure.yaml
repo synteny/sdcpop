@@ -1,0 +1,15 @@
+description: Blood pressure systolic & diastolic
+title: Blood Pressure
+items:
+  - text: Blood pressure
+    type: group
+    definition: Observation/blood-pressure.yaml
+    items:
+      - text: Systolic
+        type: decimal
+        itemControl: textbox
+        path: 'Observation.component[0].value'
+      - text: Diastolic
+        type: decimal
+        itemControl: textbox
+        path: 'Observation.component[1].value'

@@ -1,0 +1,29 @@
+code:
+  constant:
+    coding:
+      system: http://loinc.org
+      code: 85354-9
+component:
+  slices:
+    key: systolic
+    elements:
+      code:
+        constant:
+          coding:
+            system: http://loinc.org
+            code: 8480-6
+      value:
+        Quantity:
+          unit:
+            constant: mm[Hg]
+    key: diastolic
+    elements:
+      code:
+        constant:
+          coding:
+            system: http://loinc.org
+            code: 8462-4
+      value:
+        Quantity:
+          unit:
+            constant: mm[Hg]
