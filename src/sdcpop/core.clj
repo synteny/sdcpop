@@ -84,20 +84,22 @@
   "Takes an item as an input and returns an item map where some keys are preprocessed."
   [meta itm]
   (let [linkId (get itm :linkId (str (java.util.UUID/randomUUID)))
-        meta' (assoc meta linkId (get itm :type))]
+        dfn (get itm :definition (get meta :definition ""))
+        meta' (assoc meta linkId (get itm :type) :definition dfn)]
     (->> (merge (assoc itm :linkId linkId)
                 (when (seq (select-keys itm (keys known-extensions)))
                   {:extension (mapv extension (select-keys itm (keys known-extensions)))}))
          (reduce-kv
           (fn [m k v]
             (case k
-              ;; ignore extension keys
-              (:path :calculatedExpression :itemControl) m
-              ;; some keys need a special treatment
-              :answers (if (coll? v) 
+              ;; ignore extension and definition keys
+              (:path :calculatedExpression :itemControl :definition) m
+              ;; some keys need special treatment
+              :answers (if (coll? v)
                          (assoc m :answerOption (mapv #(hash-map :valueCoding %) v))
                          (assoc m :answerValueSet v))
               :enableWhen (assoc m k (enable-when v meta'))
+              :elementId (assoc m :definition (str (structure-definition-url (:definition meta')) "#" v))
               :items (assoc m
                             :item
                             (loop [meta' meta'
@@ -112,7 +114,6 @@
                                    (rest items)
                                    (conj res (item meta' it))))
                                 res)))
-              :definition (assoc m k (structure-definition-url v))
               ;; all other keys just copied over
               (assoc m k v)))
           {}))))

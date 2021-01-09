@@ -1,49 +1,51 @@
 description: Example Questionnaire for SDCPOP
 title: Example Questionnaire
 items:
-  - text: Пол
+  - text: Gender
     type: choice
     required: false
     answers:
-      - code: Male
-        display: Мужской
-      - code: Female
-        display: Женский
+      - system: http://hl7.org/fhir/administrative-gender
+        code: Male
+        display: Male
+      - system: http://hl7.org/fhir/administrative-gender
+        code: Female
+        display: Female
     definition: Observation
-    path: 'value as CodeableConcept'
-  - text: Индекс массы тела
+    elementId: Observation.value[x]:valueCodeableConcept
+  - text: Body Mass Index
     type: group
     required: true
     items:
-      - text: Рост
+      - text: Height
         type: decimal
         linkId: height
         itemControl: textbox
         definition: Observation/example-questionnaire-height.yaml
-        path: '(value as Quantity).value as decimal'
-      - text: Вес
+        elementId: Observation.value[x]:valueQuantity.value
+      - text: Weight
         type: decimal
         linkId: weight
         itemControl: textbox
         definition: Observation/example-questionnaire-weight.yaml
-        path: '(value as Quantity).value as decimal'
-      - text: ИМТ
+        elementId: Observation.value[x]:valueQuantity.value
+      - text: BMI
         type: decimal
         readOnly: true
         enableWhen: ['weight exists', 'height > 0']
         enableBehavior: all
         calculatedExpression: '%weight / %height / %height'
         definition: Observation/example-questionnaire-bmi.yaml
-        path: '(value as Quantity).value as decimal'
-  - text: Диагноз
+        elementId: Observation.value[x]:valueQuantity.value
+  - text: Diagnosis
     type: group
     repeats: true
     definition: Condition
     items:
-      - text: Заболевание
+      - text: Disease
         type: choice
         answers: http://hl7.org/fhir/ValueSet/icd-10
-        path: 'Condition.code as CodeableConcept'
-      - text: Дата наступления
+        elementId: Condition.code
+      - text: Onset date
         type: dateTime
-        path: 'Condition.onset as dateTime'                                                                                                                                                                                                         
+        elementId: Condition.onset                                                                                                                                                                                                         

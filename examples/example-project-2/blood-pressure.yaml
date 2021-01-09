@@ -8,8 +8,8 @@ items:
       - text: Systolic
         type: decimal
         itemControl: textbox
-        path: 'Observation.component[0].value'
+        elementId: 'Observation.component:systolic.value'
       - text: Diastolic
         type: decimal
         itemControl: textbox
-        path: 'Observation.component[1].value'
+        elementId: 'Observation.component:distolic.value'

@@ -17,3 +17,7 @@ pom.xml.asc
 .floo
 .flooignore
 output
+.clj-kondo
+.lsp
+.vscode
+.calva
