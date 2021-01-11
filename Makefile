@@ -17,6 +17,3 @@ jar:
 
 build:	jar
 	cp target/sdcpop-0.0.1-standalone.jar target/sdcpop.jar
-
-test:
-	clojure -A:test:runner
